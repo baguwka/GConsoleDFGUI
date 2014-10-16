@@ -97,11 +97,11 @@ namespace Assets.GConsoleDFGUI {
             _input.Text = string.Empty;
          }
          updateFocus();
-         updateScroll();
       }
 
       private void onOutput(string line) {
          _output.Text += string.Format("{0}{1}", Environment.NewLine, line);
+         updateScroll();
       }
 
       private void onEnterFocus(dfControl control, dfFocusEventArgs args) {
