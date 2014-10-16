@@ -1,16 +1,17 @@
 GConsoleDFGUI
 ============
 
+![alt tag](http://i.imgur.com/Y9gfWpH.png)
+
 DFGUI Frontend for GConsole
 See [GConsole](https://github.com/Rahazan/GConsole).
 
 See [releases](https://github.com/baguwka/GConsoleDFGUI/releases) for UnityPackage releases.
 
-
 Important!
 =========
 
-At this time GConsoleDFGUI will work only with this fork of [GConsole](https://github.com/baguwka/GConsole), soon may be will be update to main repo.
+Make sure you using up to date version of [GConsole](https://github.com/Rahazan/GConsole).
 
 #Setup:
 
