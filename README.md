@@ -3,7 +3,8 @@ GConsoleDFGUI
 
 ![alt tag](http://i.imgur.com/Y9gfWpH.png)
 
-DFGUI Frontend for GConsole
+Daikon Forge GUI Frontend for GConsole
+
 See [GConsole](https://github.com/Rahazan/GConsole).
 
 See [releases](https://github.com/baguwka/GConsoleDFGUI/releases) for UnityPackage releases.
