@@ -68,7 +68,7 @@ namespace Assets.GConsoleDFGUI {
             Debug.LogWarning("There is no suggestions attached, attach them in Unity Inspector on this script.");
          }
 
-         GConsole.SetColorCode((text, color) => string.Format("[color #{0}]{1}[/color]", color, text));
+         GConsole.Color = (text, color) => string.Format("[color #{0}]{1}[/color]", color, text);
 
          foreach (var suggestion in _suggestions) {
             suggestion.Click += onSuggestionClick;
