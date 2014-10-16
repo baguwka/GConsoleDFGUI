@@ -1,7 +1,7 @@
 GConsoleDFGUI
 ============
 
-![alt tag](http://i.imgur.com/Y9gfWpH.png)
+![alt tag](http://i.imgur.com/fgjUs3A.png)
 
 Daikon Forge GUI Frontend for GConsole
 
