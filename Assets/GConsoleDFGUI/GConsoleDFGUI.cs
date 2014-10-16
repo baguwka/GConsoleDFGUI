@@ -7,6 +7,7 @@ namespace Assets.GConsoleDFGUI {
    public class GConsoleDFGUI : MonoBehaviour {
       private dfControl _control;
       private dfTextbox _input;
+      private dfScrollPanel _scrollPanel;
       private dfLabel _output;
 
 #if UNITY_EDITOR
@@ -30,6 +31,14 @@ namespace Assets.GConsoleDFGUI {
       [SerializeField]
       private GConsoleDFGUISuggestion[] _suggestions;
 
+      public bool IsVisible {
+         get { return _control.IsVisible; }
+         set {
+            _control.IsVisible = value;
+            if (value) updateScroll();
+         }
+      }
+
       public bool ClearOnSubmit {
          get { return _clearOnSubmit; }
       }
@@ -42,7 +51,8 @@ namespace Assets.GConsoleDFGUI {
          }
          _input.Text = string.Empty;
 
-         _output = _control.Find<dfScrollPanel>("ScrollView").Find<dfLabel>("Output");
+         _scrollPanel = _control.Find<dfScrollPanel>("ScrollView");
+         _output = _scrollPanel.Find<dfLabel>("Output");
          if (_output == null) {
             throw new NullReferenceException("_outputBox is null or script " + typeof(dfTextbox).Name + " not attached, attach it in the inspector to \"Output\" GameObject.");
          }
@@ -87,6 +97,7 @@ namespace Assets.GConsoleDFGUI {
             _input.Text = string.Empty;
          }
          updateFocus();
+         updateScroll();
       }
 
       private void onOutput(string line) {
@@ -138,16 +149,20 @@ namespace Assets.GConsoleDFGUI {
          }
       }
 
+      private void updateScroll() {
+         _scrollPanel.ScrollPosition = new Vector2(0, float.MaxValue);
+      }
+
       public void Show() {
-         _control.IsVisible = true;
+         IsVisible = true;
       }
 
       public void Hide() {
-         _control.IsVisible = false;
+         IsVisible = false;
       }
 
       public void Toggle() {
-         _control.IsVisible = !_control.IsVisible;
+         IsVisible = !_control.IsVisible;
       }
    }
 }
