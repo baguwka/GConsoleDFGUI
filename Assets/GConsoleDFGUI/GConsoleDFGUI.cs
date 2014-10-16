@@ -23,6 +23,12 @@ namespace Assets.GConsoleDFGUI {
       private bool _reselectOnSubmit = true;
 
 #if UNITY_EDITOR
+      [Tooltip("Will reset scroll position to bottom on panel show.")]
+#endif
+      [SerializeField]
+      private bool _resetScrollPositionOnShow = true;
+
+#if UNITY_EDITOR
       [Tooltip("How much characters user needs to type to see any suggestions.")]
 #endif
       [SerializeField]
@@ -35,7 +41,7 @@ namespace Assets.GConsoleDFGUI {
          get { return _control.IsVisible; }
          set {
             _control.IsVisible = value;
-            if (value) updateScroll();
+            if (_resetScrollPositionOnShow && value) updateScroll();
          }
       }
 
@@ -61,6 +67,8 @@ namespace Assets.GConsoleDFGUI {
          if (_suggestions.Length == 0) {
             Debug.LogWarning("There is no suggestions attached, attach them in Unity Inspector on this script.");
          }
+
+         GConsole.SetColorCode((text, color) => string.Format("[color #{0}]{1}[/color]", color, text));
 
          foreach (var suggestion in _suggestions) {
             suggestion.Click += onSuggestionClick;
