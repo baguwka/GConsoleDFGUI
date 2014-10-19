@@ -60,7 +60,7 @@ namespace Assets.GConsoleDFGUI {
          _scrollPanel = _control.Find<dfScrollPanel>("ScrollView");
          _output = _scrollPanel.Find<dfLabel>("Output");
          if (_output == null) {
-            throw new NullReferenceException("_outputBox is null or script " + typeof(dfTextbox).Name + " not attached, attach it in the inspector to \"Output\" GameObject.");
+            throw new NullReferenceException("_outputBox is null or script " + typeof(dfLabel).Name + " not attached, attach it in the inspector to \"Output\" GameObject.");
          }
          _output.Text = string.Empty;
 
