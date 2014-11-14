@@ -37,10 +37,44 @@ namespace Assets.GConsoleDFGUI {
       [SerializeField]
       private GConsoleDFGUISuggestion[] _suggestions;
 
+      public dfControl Control {
+         get { return _control ?? (_control = GetComponent<dfControl>()); }
+      }
+
+      public dfTextbox Input {
+         get {
+            if (_input != null) return _input;
+
+            _input = Control.Find<dfTextbox>("Input");
+            if (_input == null) {
+               throw new NullReferenceException("_inputBox is null or script " + typeof(dfTextbox).Name + " not attached, attach it in the inspector to \"Input\" GameObject.");
+            }
+
+            return _input;
+         }
+      }
+
+      public dfScrollPanel ScrollPanel {
+         get { return _scrollPanel ?? (_scrollPanel = Control.Find<dfScrollPanel>("ScrollView")); }
+      }
+
+      public dfLabel Output {
+         get {
+            if (_output != null) return _output;
+
+            _output = Control.Find<dfLabel>("Output");
+            if (_output == null) {
+               throw new NullReferenceException("_outputBox is null or script " + typeof(dfLabel).Name + " not attached, attach it in the inspector to \"Output\" GameObject.");
+            }
+
+            return _output;
+         }
+      }
+
       public bool IsVisible {
-         get { return _control.IsVisible; }
+         get { return Control.IsVisible; }
          set {
-            _control.IsVisible = value;
+            Control.IsVisible = value;
             if (_resetScrollPositionOnShow && value) updateScroll();
          }
       }
@@ -50,47 +84,38 @@ namespace Assets.GConsoleDFGUI {
       }
 
       private void Start() {
-         _control = GetComponent<dfControl>();
-         _input = _control.Find<dfTextbox>("Input");
-         if (_input == null) {
-            throw new NullReferenceException("_inputBox is null or script " + typeof(dfTextbox).Name + " not attached, attach it in the inspector to \"Input\" GameObject.");
-         }
-         _input.Text = string.Empty;
-
-         _scrollPanel = _control.Find<dfScrollPanel>("ScrollView");
-         _output = _scrollPanel.Find<dfLabel>("Output");
-         if (_output == null) {
-            throw new NullReferenceException("_outputBox is null or script " + typeof(dfLabel).Name + " not attached, attach it in the inspector to \"Output\" GameObject.");
-         }
-         _output.Text = string.Empty;
-
          if (_suggestions.Length == 0) {
             Debug.LogWarning("There is no suggestions attached, attach them in Unity Inspector on this script.");
          }
 
          GConsole.Color = (text, color) => string.Format("[color #{0}]{1}[/color]", color, text);
+      }
+
+      private void OnEnable() {
+         Input.Text = string.Empty;
+         Output.Text = string.Empty;
+
+         Input.TextSubmitted += onSubmit;
+         Input.TextChanged += onInputTextChanged;
+         Input.EnterFocus += onEnterFocus;
+         Input.LostFocus += onLostFocus;
+         GConsole.OnOutput += onOutput;
 
          foreach (var suggestion in _suggestions) {
             suggestion.Click += onSuggestionClick;
          }
-
-         _input.TextSubmitted += onSubmit;
-         _input.TextChanged += onInputTextChanged;
-         _input.EnterFocus += onEnterFocus;
-         _input.LostFocus += onLostFocus;
-         GConsole.OnOutput += onOutput;
       }
 
-      private void OnDestroy() {
+      private void OnDisable() {
+         Input.TextSubmitted -= onSubmit;
+         Input.TextChanged -= onInputTextChanged;
+         Input.EnterFocus -= onEnterFocus;
+         Input.LostFocus -= onLostFocus;
+         GConsole.OnOutput -= onOutput;
+
          foreach (var suggestion in _suggestions) {
             suggestion.Click -= onSuggestionClick;
          }
-
-         _input.TextSubmitted -= onSubmit;
-         _input.TextChanged -= onInputTextChanged;
-         _input.EnterFocus -= onEnterFocus;
-         _input.LostFocus -= onLostFocus;
-         GConsole.OnOutput -= onOutput;
       }
 
       private void onInputTextChanged(dfControl control, string value) {
@@ -102,13 +127,13 @@ namespace Assets.GConsoleDFGUI {
 
          GConsole.Eval(cmd);
          if (_clearOnSubmit) {
-            _input.Text = string.Empty;
+            Input.Text = string.Empty;
          }
          updateFocus();
       }
 
       private void onOutput(string line) {
-         _output.Text += string.Format("{0}{1}", Environment.NewLine, line);
+         Output.Text += string.Format("{0}{1}", Environment.NewLine, line);
          updateScroll();
       }
 
@@ -122,12 +147,12 @@ namespace Assets.GConsoleDFGUI {
       }
 
       private void loadSuggestions() {
-         if (_input.Text.Length < minCharBeforeSuggestions) {
+         if (Input.Text.Length < minCharBeforeSuggestions) {
             hideSuggestions();
             return;
          }
 
-         var sugStrings = GConsole.GetSuggestionItems(_input.Text);
+         var sugStrings = GConsole.GetSuggestionItems(Input.Text);
 
          for (int i = 0; i < _suggestions.Length; i++) {
             if (i < sugStrings.Count) {
@@ -146,19 +171,19 @@ namespace Assets.GConsoleDFGUI {
       }
 
       private void onSuggestionClick(GConsoleDFGUISuggestion sender) {
-         _input.Text = sender.Text;
+         Input.Text = sender.Text;
          updateFocus();
       }
 
       private void updateFocus() {
          if (_reselectOnSubmit) {
-            _input.Focus();
-            _input.CursorIndex = _input.Text.Length;
+            Input.Focus();
+            Input.CursorIndex = Input.Text.Length;
          }
       }
 
       private void updateScroll() {
-         _scrollPanel.ScrollPosition = new Vector2(0, float.MaxValue);
+         ScrollPanel.ScrollPosition = new Vector2(0, float.MaxValue);
       }
 
       public void Show() {
@@ -170,7 +195,7 @@ namespace Assets.GConsoleDFGUI {
       }
 
       public void Toggle() {
-         IsVisible = !_control.IsVisible;
+         IsVisible = !Control.IsVisible;
       }
    }
 }
